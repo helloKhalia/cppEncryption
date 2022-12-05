@@ -1,31 +1,86 @@
-﻿
-Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio Version 17
-VisualStudioVersion = 17.3.32922.545
-MinimumVisualStudioVersion = 10.0.40219.1
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Project1", "Project1\Project1.vcxproj", "{350609DF-822E-4111-BAAD-2B78BECFF5FC}"
-EndProject
-Global
-	GlobalSection(SolutionConfigurationPlatforms) = preSolution
-		Debug|x64 = Debug|x64
-		Debug|x86 = Debug|x86
-		Release|x64 = Release|x64
-		Release|x86 = Release|x86
-	EndGlobalSection
-	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{350609DF-822E-4111-BAAD-2B78BECFF5FC}.Debug|x64.ActiveCfg = Debug|x64
-		{350609DF-822E-4111-BAAD-2B78BECFF5FC}.Debug|x64.Build.0 = Debug|x64
-		{350609DF-822E-4111-BAAD-2B78BECFF5FC}.Debug|x86.ActiveCfg = Debug|Win32
-		{350609DF-822E-4111-BAAD-2B78BECFF5FC}.Debug|x86.Build.0 = Debug|Win32
-		{350609DF-822E-4111-BAAD-2B78BECFF5FC}.Release|x64.ActiveCfg = Release|x64
-		{350609DF-822E-4111-BAAD-2B78BECFF5FC}.Release|x64.Build.0 = Release|x64
-		{350609DF-822E-4111-BAAD-2B78BECFF5FC}.Release|x86.ActiveCfg = Release|Win32
-		{350609DF-822E-4111-BAAD-2B78BECFF5FC}.Release|x86.Build.0 = Release|Win32
-	EndGlobalSection
-	GlobalSection(SolutionProperties) = preSolution
-		HideSolutionNode = FALSE
-	EndGlobalSection
-	GlobalSection(ExtensibilityGlobals) = postSolution
-		SolutionGuid = {4C1FFC47-83F9-4570-B9C4-4F9B61564CF1}
-	EndGlobalSection
-EndGlobal
+#include <iostream>
+#include <fstream>
+#include <random> //allows me to use the random number generator
+
+using namespace std;
+
+int main()
+{
+	ifstream input;
+	ofstream output;
+
+	//open both input and output files
+	input.open("input.txt");
+	output.open("output.txt");
+
+	int operation;
+	int seed;
+	char ch;
+	
+	// prompts user for operation
+	cout << "Select operation (0 = none, 1 = encrypt, 2 = decrypt): " << endl;
+	cin >> operation; // stores the users input into the 'operation' variable
+	cout << "Enter the key: " << endl;
+	cin >> seed; // stores the encrypt/decrypt key into the 'seed' variable
+
+    // define random generator
+	default_random_engine generator(seed);
+	uniform_int_distribution<int> distribution(0, 127);
+
+	int randomNumber;
+	
+	//check for proper copy and paste from input file to output file
+	if (operation == 0) {
+		
+		ch = input.get(); //Read char from input file
+
+		// loop that gets each individual character from the input file and places it in the output file
+		// loop continues until the last character of the in
+		while (!input.eof()) {
+
+			output.put(ch);
+			ch = input.get();
+
+		}
+	}
+
+		//encrypt input file to the output file
+	else if (operation == 1) { 
+		
+
+		ch = input.get(); //
+
+		// this loops gets each indiv character and assigns a random number
+		while (!input.eof()) {
+
+			randomNumber = distribution(generator);
+			//generates random number for each character
+			ch = (ch + randomNumber) % 128;
+			output.put(ch); // print to output file
+			ch = input.get();
+		
+
+		}
+	}
+
+	//decrypt input file to the output file
+	else if (operation == 2) {
+
+		ch = input.get();
+		while (!input.eof()) {
+			randomNumber = distribution(generator);
+			//generates random number for each character
+			ch = (ch + 128 - randomNumber) % 128;
+
+			output.put(ch); //print to output file
+			ch = input.get();
+
+		}
+	}
+
+	//close both files
+	input.close();
+	output.close();
+
+	return (0);
+}
